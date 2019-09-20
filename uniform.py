@@ -1,7 +1,7 @@
 from PIL import Image
 import os, sys
 
-path ='./data/portrait/'
+path ='./data/abstract/'
 
 dirs = os.listdir( path )
 
@@ -26,7 +26,8 @@ for item in dirs:
             RGB = imResize.convert('RGB')
             little = RGB.resize((32,32), Image.ANTIALIAS)
 
-            little.save(f + 'resize.jpg', 'JPEG', quality=30)
-            
+            little.save(f + '_resized.jpg', 'JPEG', quality=30)
+            print("saving {}".format(f))
+
     except Exception as e:
         print(e)
