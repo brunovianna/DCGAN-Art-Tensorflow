@@ -26,6 +26,7 @@ flags.DEFINE_boolean("train", True, "True for training, False for testing [False
 flags.DEFINE_boolean("crop", True, "True for training, False for testing [False]")
 flags.DEFINE_boolean("visualize", False, "True for visualizing, False for nothing [False]")
 flags.DEFINE_integer("generate_test_images", 100, "Number of images to generate during test. [100]")
+flags.DEFINE_integer("viz_option", 1, "visualization option [1. testing image, 2. gif]")
 FLAGS = flags.FLAGS
 
 def main(_):
@@ -47,7 +48,7 @@ def main(_):
   run_config.gpu_options.allow_growth=True
 
 
- 
+
   with tf.Session(config=run_config) as sess:
     if FLAGS.dataset == 'mnist':
       dcgan = DCGAN(
@@ -99,7 +100,11 @@ def main(_):
     #                 [dcgan.h4_w, dcgan.h4_b, None])
 
     # Below is codes for visualization
-    OPTION = 1
+    if FLAGS.viz_option is None:
+        OPTION = 1
+    else:
+        OPTION = FLAGS.viz_option
+
     visualize(sess, dcgan, FLAGS, OPTION)
 
 if __name__ == '__main__':
