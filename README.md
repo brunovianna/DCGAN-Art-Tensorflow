@@ -12,7 +12,7 @@ Use Abstract dataset(8145 images) as an example:
 1. download abstract.zip from the author's link `https://drive.google.com/open?id=17Cm2352V9G1tR4kii5yHI_KUkevLC67_` and unzip into the `./data` folder
 2. `python uniform.py` to convert the images to RGB and resize them
 3. if you don't want to load checkpoints, make sure to empty checkpoint folder
-4. `python main.py`
+4. `python main.py --train --crop`
 
 the default parameter settings are specified in the following section in `main.py` file, which can be overwritten by providing values in the command line.
 
@@ -30,10 +30,9 @@ For example, the default epoch for training is 25 and dataset is in "abstract-re
     ```
 - run `python uniform.py` to generate resized images in `./data/flower-resize`
 
-- train the model with flower dataset with 5 epochs: `python main.py --epoch=5 --dataset=flower-resize`, the checkpoints will be generated and saved in a subfolder in checkpoint folder with prefix "flower-resize"
+- train the model with flower dataset with 5 epochs: `python main.py --epoch=5 --dataset=flower-resize --train`, the checkpoints will be generated and saved in a subfolder in checkpoint folder with prefix "flower-resize"
 
 <img width="390" alt="Screen Shot 2019-09-23 at 2 54 48 PM" src="https://user-images.githubusercontent.com/595772/65453941-2733e200-de12-11e9-9e7b-6f662b032d90.png">
-
 
 ```python
 flags = tf.app.flags
@@ -55,9 +54,19 @@ flags.DEFINE_boolean("train", True, "True for training, False for testing [False
 flags.DEFINE_boolean("crop", True, "True for training, False for testing [False]")
 flags.DEFINE_boolean("visualize", False, "True for visualizing, False for nothing [False]")
 flags.DEFINE_integer("generate_test_images", 100, "Number of images to generate during test. [100]")
-FLAGS = flags.FLAGS
+flags.DEFINE_integer("option", 1, "visualization option [1]")
 ```
 
+Pay attention to parameter `option`. Different option can generate different kinds of visualization, this is very useful for testing.
+- option = 0: Cannot be used for MNIST. Generate a big map containing `batch_size` images generated randomly.
+- option = 1: Almost do the same thing as OPTION 0, but can be applied for MNIST.
+- option = 2: Generate a GIF lasting 2 seconds with `batch_size` frames. If failed, do the same thing as OPTION 1.
+- option = 3: Cannot be used for MNIST, and generate the same GIF as OPTION 2.
+- option = 4: Generate a big map containing `z_dim` GIFs.
+So if you want to generate a big map containing 100 GIFs on flower dataset: 
+```shell
+python main.py --dataset flower-resize --option 4
+```
 ## Training on CPU
 - Training Equipment: Intel Xeon E3 4 cores
 - Training Time: About 1 hour per epoch
@@ -68,7 +77,6 @@ FLAGS = flags.FLAGS
 - batch_size: 64
 - input size: 256 * 256
 - output size: 128 * 128
-
 
 ## Result on Abstract.zip
 - after 1 epoch
@@ -84,21 +92,6 @@ FLAGS = flags.FLAGS
 ![](https://github.com/zhuojg/DCGAN-Art-Tensorflow/raw/master/samples/test_arange_7.png)
 ![](https://github.com/zhuojg/DCGAN-Art-Tensorflow/raw/master/samples/test_arange_21.png)
 ![](https://github.com/zhuojg/DCGAN-Art-Tensorflow/raw/master/samples/test_arange_31.png)
-
-## Use your own data
-1. unzip your data in `./data/YourDatasetName`
-2. change `path, target_path and target_size` in uniform.py according to your data
-3. change `flags` in main.py according to your data, or you can add parameters when run main.py, for example, `python main.py --epoch 100 --train True`
-
-## Different options for visualization
-Change the value of `OPTION` in main.py to generate different kinds of visualization.  
-  
-- OPTION = 0: Cannot be used for MNIST. Generate a big map containing `batch_size` images generated randomly.
-- OPTION = 1: Almost do the same thing as OPTION 0, but can be applied for MNIST.
-- OPTION = 2: Generate a GIF lasting 2 seconds with `batch_size` frames. If failed, do the same thing as OPTION 1.
-- OPTION = 3: Cannot be used for MNIST, and generate the same GIF as OPTION 2.
-- OPTION = 4: Generate a big map containing `z_dim` GIFs.
-
 
 ## Train use Google Cloud Platform (GCP)
 

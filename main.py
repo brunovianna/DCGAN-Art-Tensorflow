@@ -22,11 +22,11 @@ flags.DEFINE_string("input_fname_pattern", "*.jpg", "Glob pattern of filename of
 flags.DEFINE_string("checkpoint_dir", "checkpoint", "Directory name to save the checkpoints [checkpoint]")
 flags.DEFINE_string("data_dir", "./data", "Root directory of dataset [data]")
 flags.DEFINE_string("sample_dir", "samples", "Directory name to save the image samples [samples]")
-flags.DEFINE_boolean("train", True, "True for training, False for testing [False]")
-flags.DEFINE_boolean("crop", True, "True for training, False for testing [False]")
+flags.DEFINE_boolean("train", False, "True for training, False for testing [False]")
+flags.DEFINE_boolean("crop", False, "True for training, False for testing [False]")
 flags.DEFINE_boolean("visualize", False, "True for visualizing, False for nothing [False]")
 flags.DEFINE_integer("generate_test_images", 100, "Number of images to generate during test. [100]")
-flags.DEFINE_integer("viz_option", 1, "visualization option [1. testing image, 2. gif]")
+flags.DEFINE_integer("option", 1, "visualization option [1]")
 FLAGS = flags.FLAGS
 
 def main(_):
@@ -48,7 +48,7 @@ def main(_):
   run_config.gpu_options.allow_growth=True
 
 
-
+ 
   with tf.Session(config=run_config) as sess:
     if FLAGS.dataset == 'mnist':
       dcgan = DCGAN(
@@ -100,12 +100,9 @@ def main(_):
     #                 [dcgan.h4_w, dcgan.h4_b, None])
 
     # Below is codes for visualization
-    if FLAGS.viz_option is None:
-        OPTION = 1
-    else:
-        OPTION = FLAGS.viz_option
-
+    OPTION = FLAGS.option
     visualize(sess, dcgan, FLAGS, OPTION)
+
 
 if __name__ == '__main__':
   tf.app.run()
