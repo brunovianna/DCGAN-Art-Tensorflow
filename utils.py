@@ -6,13 +6,19 @@ import math
 import json
 import random
 import pprint
-import scipy.misc
+# import scipy.misc
 import numpy as np
 from time import gmtime, strftime
 from six.moves import xrange
 
 import tensorflow as tf
 import tensorflow.contrib.slim as slim
+
+from skimage import io
+from skimage import transform as sktf
+
+import imageio
+from PIL import Image
 
 pp = pprint.PrettyPrinter()
 
@@ -34,9 +40,9 @@ def save_images(images, size, image_path):
 
 def imread(path, grayscale = False):
   if (grayscale):
-    return scipy.misc.imread(path, flatten = True).astype(np.float)
+    return io.imread(path, flatten=True).astype(np.float)
   else:
-    return scipy.misc.imread(path).astype(np.float)
+    return io.imread(path).astype(np.float)
 
 def merge_images(images, size):
   return inverse_transform(images)
@@ -64,7 +70,7 @@ def merge(images, size):
 
 def imsave(images, size, path):
   image = np.squeeze(merge(images, size))
-  return scipy.misc.imsave(path, image)
+  return io.imsave(path, image)
 
 def center_crop(x, crop_h, crop_w,
                 resize_h=64, resize_w=64):
@@ -73,8 +79,7 @@ def center_crop(x, crop_h, crop_w,
   h, w = x.shape[:2]
   j = int(round((h - crop_h)/2.))
   i = int(round((w - crop_w)/2.))
-  return scipy.misc.imresize(
-      x[j:j+crop_h, i:i+crop_w], [resize_h, resize_w])
+  return sktf.resize(x[j:j+crop_h, i:i+crop_w], [resize_h, resize_w])
 
 def transform(image, input_height, input_width, 
               resize_height=64, resize_width=64, crop=True):
@@ -83,7 +88,7 @@ def transform(image, input_height, input_width,
       image, input_height, input_width, 
       resize_height, resize_width)
   else:
-    cropped_image = scipy.misc.imresize(image, [resize_height, resize_width])
+    cropped_image = sktf.resize(image, [resize_height, resize_width])
   return np.array(cropped_image)/127.5 - 1.
 
 def inverse_transform(images):
@@ -157,7 +162,7 @@ def make_gif(images, fname, duration=2, true_image=False):
 
   def make_frame(t):
     try:
-      x = images[int(len(images)/duration*t)]
+      x = images[int(len(images) * t / duration)]
     except:
       x = images[-1]
 
@@ -167,7 +172,8 @@ def make_gif(images, fname, duration=2, true_image=False):
       return ((x+1)/2*255).astype(np.uint8)
 
   clip = mpy.VideoClip(make_frame, duration=duration)
-  clip.write_gif(fname, fps = len(images) / duration)
+  clip.write_gif(fname, fps=len(images) / duration)
+
 
 def visualize(sess, dcgan, config, option):
   image_frame_dim = int(math.ceil(config.batch_size**.5))
@@ -200,7 +206,7 @@ def visualize(sess, dcgan, config, option):
     values = np.arange(0, 1, 1./config.batch_size)
     for idx in [random.randint(0, dcgan.z_dim - 1) for _ in xrange(dcgan.z_dim)]:
       print(" [*] %d" % idx)
-      z = np.random.uniform(-0.2, 0.2, size=(dcgan.z_dim))
+      z = np.random.uniform(-1, 1, size=(dcgan.z_dim))
       z_sample = np.tile(z, (config.batch_size, 1))
       #z_sample = np.zeros([config.batch_size, dcgan.z_dim])
       for kdx, z in enumerate(z_sample):
@@ -245,7 +251,7 @@ def visualize(sess, dcgan, config, option):
       make_gif(image_set[-1], './samples/test_gif_%s.gif' % (idx))
 
     new_image_set = [merge(np.array([images[idx] for images in image_set]), [10, 10]) \
-        for idx in range(64) + range(63, -1, -1)]
+        for idx in list(range(64)) + list(range(63, -1, -1))]
     make_gif(new_image_set, './samples/test_gif_merged.gif', duration=8)
 
 

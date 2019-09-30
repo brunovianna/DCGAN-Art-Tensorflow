@@ -1,10 +1,17 @@
 from PIL import Image
 import os, sys
 
-path ='./data/abstract/'
+# path is the folder containing your data
+path = './data/abstract/'
 
-dirs = os.listdir( path )
+# target_path is the folder storing resized images
+target_path = './data/abstract-resize'
 
+target_size = (256, 256)
+
+dirs = os.listdir(path)
+if not os.path.isdir(target_path):
+    os.mkdir(target_path)
 
 for item in dirs:
     try:
@@ -24,9 +31,10 @@ for item in dirs:
             )
             )
             RGB = imResize.convert('RGB')
-            little = RGB.resize((32,32), Image.ANTIALIAS)
+            little = RGB.resize((256, 256), Image.ANTIALIAS)
 
-            little.save(f + '_resized.jpg', 'JPEG', quality=30)
+            little.save(target_path + '/' + item, 'JPEG', quality=50)
+            # little.save(f + '_resized.jpg', 'JPEG', quality=30)
             print("saving {}".format(f))
 
     except Exception as e:
