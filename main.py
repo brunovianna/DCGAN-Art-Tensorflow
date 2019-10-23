@@ -26,6 +26,7 @@ flags.DEFINE_boolean("train", False, "True for training, False for testing [Fals
 flags.DEFINE_boolean("crop", False, "True for training, False for testing [False]")
 flags.DEFINE_boolean("visualize", False, "True for visualizing, False for nothing [False]")
 flags.DEFINE_integer("generate_test_images", 100, "Number of images to generate during test. [100]")
+flags.DEFINE_integer("option", 0, "Type of output samples [0]")
 FLAGS = flags.FLAGS
 
 def main(_):
@@ -99,8 +100,8 @@ def main(_):
     #                 [dcgan.h4_w, dcgan.h4_b, None])
 
     # Below is codes for visualization
-    OPTION = 2
-    visualize(sess, dcgan, FLAGS, OPTION)
+    #OPTION = 2
+    visualize(sess, dcgan, FLAGS, FLAGS.option)
 
 
 if __name__ == '__main__':
