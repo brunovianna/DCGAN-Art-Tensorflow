@@ -157,7 +157,7 @@ class DCGAN(object):
       self.G_sum, self.d_loss_fake_sum, self.g_loss_sum])
     self.d_sum = merge_summary(
         [self.z_sum, self.d_sum, self.d_loss_real_sum, self.d_loss_sum])
-    self.writer = SummaryWriter("./logs", self.sess.graph)
+    #self.writer = SummaryWriter("./logs", self.sess.graph)
 
     sample_z = np.random.uniform(-1, 1, size=(self.sample_num , self.z_dim))
     
@@ -226,7 +226,7 @@ class DCGAN(object):
               self.z: batch_z,
               self.y:batch_labels,
             })
-          self.writer.add_summary(summary_str, counter)
+          #self.writer.add_summary(summary_str, counter)
 
           # Update G network
           _, summary_str = self.sess.run([g_optim, self.g_sum],
@@ -234,12 +234,12 @@ class DCGAN(object):
               self.z: batch_z, 
               self.y:batch_labels,
             })
-          self.writer.add_summary(summary_str, counter)
+          #self.writer.add_summary(summary_str, counter)
 
           # Run g_optim twice to make sure that d_loss does not go to zero (different from paper)
           _, summary_str = self.sess.run([g_optim, self.g_sum],
             feed_dict={ self.z: batch_z, self.y:batch_labels })
-          self.writer.add_summary(summary_str, counter)
+          #self.writer.add_summary(summary_str, counter)
           
           errD_fake = self.d_loss_fake.eval({
               self.z: batch_z, 
@@ -257,17 +257,17 @@ class DCGAN(object):
           # Update D network
           _, summary_str = self.sess.run([d_optim, self.d_sum],
             feed_dict={ self.inputs: batch_images, self.z: batch_z })
-          self.writer.add_summary(summary_str, counter)
+          #self.writer.add_summary(summary_str, counter)
 
           # Update G network
           _, summary_str = self.sess.run([g_optim, self.g_sum],
             feed_dict={ self.z: batch_z })
-          self.writer.add_summary(summary_str, counter)
+          #self.writer.add_summary(summary_str, counter)
 
           # Run g_optim twice to make sure that d_loss does not go to zero (different from paper)
           _, summary_str = self.sess.run([g_optim, self.g_sum],
             feed_dict={ self.z: batch_z })
-          self.writer.add_summary(summary_str, counter)
+          #self.writer.add_summary(summary_str, counter)
           
           errD_fake = self.d_loss_fake.eval({ self.z: batch_z })
           errD_real = self.d_loss_real.eval({ self.inputs: batch_images })
