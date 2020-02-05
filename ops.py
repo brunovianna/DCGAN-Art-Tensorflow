@@ -11,13 +11,13 @@ try:
   scalar_summary = tf.scalar_summary
   histogram_summary = tf.histogram_summary
   merge_summary = tf.merge_summary
-  SummaryWriter = tf.train.SummaryWriter
+  #SummaryWriter = tf.train.SummaryWriter
 except:
   image_summary = tf.summary.image
   scalar_summary = tf.summary.scalar
   histogram_summary = tf.summary.histogram
   merge_summary = tf.summary.merge
-  SummaryWriter = tf.summary.FileWriter
+  #SummaryWriter = tf.summary.FileWriter
 
 if "concat_v2" in dir(tf):
   def concat(tensors, axis, *args, **kwargs):
